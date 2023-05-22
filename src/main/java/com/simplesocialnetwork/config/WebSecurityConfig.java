@@ -16,11 +16,14 @@ import org.springframework.security.web.SecurityFilterChain;
 public class WebSecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        return http.authorizeHttpRequests(auth -> {
-                    auth.requestMatchers("/").permitAll();
+        return http
+                .securityMatcher("/**")
+                .authorizeHttpRequests(auth -> {
+                    auth.requestMatchers("/", "/login**", "/js/**", "/error**").permitAll();
                     auth.anyRequest().authenticated();
                 })
                 .oauth2Login(Customizer.withDefaults())
+                .logout(l -> l.logoutSuccessUrl("/").permitAll())
                 .csrf(AbstractHttpConfigurer::disable)
                 .build();
     }
